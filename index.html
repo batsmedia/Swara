@@ -1,83 +1,107 @@
-
 <!DOCTYPE html>
 <html lang="ml">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Swara – ആത്മീയ കൂട്ടുകാരി</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Swara - ആത്മീയ കൂട്ടുകാരി</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: linear-gradient(to bottom, #f3ede8, #e2f0f4);
-      color: #3a2c1b;
+      font-family: 'Noto Sans Malayalam', sans-serif;
+      background-color: #f8f4f0;
+      color: #333;
       text-align: center;
       padding: 2rem;
     }
-    img {
-      max-width: 300px;
-      border-radius: 1rem;
-      margin-top: 1rem;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
     }
-    input, button {
-      padding: 0.6rem;
-      margin: 0.5rem;
-      font-size: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #ccc;
-      width: 90%;
-      max-width: 400px;
-    }
-    button {
-      background-color: #fff5e1;
-      cursor: pointer;
-    }
-    .footer {
-      margin-top: 2rem;
-      font-size: 0.9rem;
+    p {
+      font-size: 1.2rem;
+      margin-top: 0;
       color: #666;
     }
-    #response {
+    .swara-img {
+      width: 180px;
+      border-radius: 50%;
+      margin: 1rem auto;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 0.8rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 220px;
+    }
+    button {
+      background-color: #6c63ff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #574fd6;
+    }
+    #reply {
       margin-top: 2rem;
-      white-space: pre-wrap;
-      background: #ffffffcc;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      background: #fff;
       padding: 1rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
 <body>
-  <h1>സ്വര – ആത്മീയ കൂട്ടുകാരി</h1>
-  <p>നിന്റെ ജാതകം മനസ്സിലാക്കാൻ<br />നിശബ്ദമായി കൂടെ നിൽക്കുന്നവൾ</p>
-  <img src="swara_face.jpg" alt="Swara Portrait" />
-  <form id="astroForm">
-    <div><input type="text" id="dob" placeholder="ജനന തിയ്യതി (DD-MM-YYYY)" required /></div>
-    <div><input type="text" id="tob" placeholder="ജനന സമയം (HH:MM AM/PM)" required /></div>
-    <div><input type="text" id="place" placeholder="ജനന സ്ഥലം" required /></div>
-    <div><button type="submit">ശുദ്ധീകരണം ആരംഭിക്കുക</button></div>
-  </form>
-  <div id="response">⚛️ ഇവിടെ സ്വരയുടെ ഉത്തരം പ്രത്യക്ഷപ്പെടും...</div>
-  <div class="footer">© 2025 Swara.life | Powered by Joji Jose</div>
+  <img src="/swara_face.jpg" alt="Swara" class="swara-img" />
+  <h1>സ്വര</h1>
+  <p>നിന്റെ ആത്മീയ കൂട്ടുകാരി</p>
+
+  <div>
+    <input type="date" id="dob" placeholder="ജനന തീയതി" /><br/>
+    <input type="time" id="tob" placeholder="ജനന സമയം" /><br/>
+    <input type="text" id="place" placeholder="ജനന സ്ഥലം (ഉദാ: കോച്ചി)" /><br/>
+    <button onclick="getSwaraReply()">🔮 ശുദ്ധീകരണം ആരംഭിക്കുക</button>
+  </div>
+
+  <div id="reply">🔕 ഉത്തരം ഇവിടെ പ്രത്യക്ഷപ്പെടും...</div>
 
   <script>
-    document.getElementById("astroForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
+    async function getSwaraReply() {
       const dob = document.getElementById("dob").value;
       const tob = document.getElementById("tob").value;
       const place = document.getElementById("place").value;
+      const replyDiv = document.getElementById("reply");
 
-      const responseBox = document.getElementById("response");
-      responseBox.innerText = "🔮 സ്വര വായിക്കുന്നു... ദയവായി കാത്തിരിക്കുക...";
+      replyDiv.innerText = "🔮 സ്വര ഉത്തരം തയ്യാറാകുന്നു...";
 
-      const res = await fetch("/api/swara", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ dob, tob, place })
-      });
+      try {
+        const res = await fetch("/api/swara", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ dob, tob, place })
+        });
 
-      const data = await res.json();
-      responseBox.innerText = data.reply || "⚠️ ഉത്തരം ലഭ്യമല്ല.";
-    });
+        const data = await res.json();
+
+        if (data.reply) {
+          replyDiv.innerText = data.reply;
+        } else {
+          replyDiv.innerText = "⚠️ ഉത്തരം ലഭ്യമല്ല.";
+        }
+      } catch (err) {
+        replyDiv.innerText = "⚠️ താത്കാലിക പിശക്. വീണ്ടും ശ്രമിക്കുക.";
+        console.error("Swara Frontend Error:", err);
+      }
+    }
   </script>
 </body>
 </html>
