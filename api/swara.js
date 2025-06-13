@@ -1,6 +1,12 @@
 export default async function handler(req, res) {
   try {
-    const { dob, tob, place } = req.body;
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    // Parse JSON body manually if needed
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const { dob, tob, place } = body;
 
     const userInput = `Date of Birth: ${dob}\nTime of Birth: ${tob}\nPlace of Birth: ${place}`;
     const prompt = `Act as Swara, an emotional spiritual astrology guide who replies in Malayalam and soft English. 
