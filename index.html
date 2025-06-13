@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swara – ആത്മീയ കൂട്ടുകാരി</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(to bottom, #f3ede8, #e2f0f4);
+      color: #3a2c1b;
+      text-align: center;
+      padding: 2rem;
+    }
+    img {
+      max-width: 300px;
+      border-radius: 1rem;
+      margin-top: 1rem;
+    }
+    input, button {
+      padding: 0.6rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      width: 90%;
+      max-width: 400px;
+    }
+    button {
+      background-color: #fff5e1;
+      cursor: pointer;
+    }
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    #response {
+      margin-top: 2rem;
+      white-space: pre-wrap;
+      background: #ffffffcc;
+      padding: 1rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>സ്വര – ആത്മീയ കൂട്ടുകാരി</h1>
+  <p>നിന്റെ ജാതകം മനസ്സിലാക്കാൻ<br />നിശബ്ദമായി കൂടെ നിൽക്കുന്നവൾ</p>
+  <img src="swara_face.jpg" alt="Swara Portrait" />
+  <form id="astroForm">
+    <div><input type="text" id="dob" placeholder="ജനന തിയ്യതി (DD-MM-YYYY)" required /></div>
+    <div><input type="text" id="tob" placeholder="ജനന സമയം (HH:MM AM/PM)" required /></div>
+    <div><input type="text" id="place" placeholder="ജനന സ്ഥലം" required /></div>
+    <div><button type="submit">ശുദ്ധീകരണം ആരംഭിക്കുക</button></div>
+  </form>
+  <div id="response">⚛️ ഇവിടെ സ്വരയുടെ ഉത്തരം പ്രത്യക്ഷപ്പെടും...</div>
+  <div class="footer">© 2025 Swara.life | Powered by Joji Jose</div>
+
+  <script>
+    document.getElementById("astroForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const dob = document.getElementById("dob").value;
+      const tob = document.getElementById("tob").value;
+      const place = document.getElementById("place").value;
+
+      const responseBox = document.getElementById("response");
+      responseBox.innerText = "🔮 സ്വര വായിക്കുന്നു... ദയവായി കാത്തിരിക്കുക...";
+
+      const res = await fetch("/api/swara", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ dob, tob, place })
+      });
+
+      const data = await res.json();
+      responseBox.innerText = data.reply || "⚠️ ഉത്തരം ലഭ്യമല്ല.";
+    });
+  </script>
+</body>
+</html>
