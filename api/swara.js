@@ -1,22 +1,35 @@
+
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") {
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    // Parse JSON body manually if needed
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    // ✅ Safely parse JSON input
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        console.error("Invalid JSON in request body:", e);
+        return res.status(400).json({ error: "Invalid JSON body" });
+      }
+    }
+
     const { dob, tob, place } = body;
 
-    const userInput = `Date of Birth: ${dob}\nTime of Birth: ${tob}\nPlace of Birth: ${place}`;
-    const prompt = `Act as Swara, an emotional spiritual astrology guide who replies in Malayalam and soft English. 
-Given this birth info:
-${userInput}
+    if (!dob || !tob || !place) {
+      return res.status(400).json({ error: "Missing input fields" });
+    }
 
-Return a gentle astrology reading covering Nakshatra, Lagna, and current Dasha insights.
-Include emotional and spiritual comfort in your response.`;
+    const prompt = `Act as Swara, a kind and emotional Malayalam astrology guide. Based on:
+Date of Birth: ${dob}
+Time of Birth: ${tob}
+Place of Birth: ${place}
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+Please give a heartfelt Malayalam astrology reading covering Nakshatra, Lagna, and Dasha insights, with emotional comfort and blessings.`;
+
+    const gptResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,15 +42,17 @@ Include emotional and spiritual comfort in your response.`;
       })
     });
 
-    const data = await response.json();
+    const data = await gptResponse.json();
+
+    console.log("OpenAI GPT Response:", data);
 
     if (!data.choices || !data.choices[0]) {
-      throw new Error("Invalid response from OpenAI");
+      return res.status(500).json({ error: "OpenAI did not return any reply" });
     }
 
     res.status(200).json({ reply: data.choices[0].message.content });
-  } catch (error) {
-    console.error("Swara API Error:", error);
+  } catch (err) {
+    console.error("Swara API Error:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
